@@ -1,15 +1,21 @@
-from flask import Flask
+from flask import Flask, render_template, request
 from database import Database
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_func():
-    
-    data = Database.select_all('users')
-    return data[2]['username']
+def index():
+	return render_template('main.html')
 
+@app.route('/add')
+def got_to_add():
+	return render_template('add_issue.html')
 
+@app.route('login')
+def login():
+	return render_template('login.html')
+
+	
 if __name__ == '__main__':
 	app.run()
