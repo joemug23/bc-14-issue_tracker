@@ -110,6 +110,8 @@ def main():
     #     'assigned_to text Default "No one",'
     #     'raise_person text)')
 
+    # Database.insert('issues', {'description':'Fix a new problem', 'department':'Finance', 'priority':'High','raise_person':'Joemug'})
+
 
     # Database.db.execute("drop table if exists users")
     # Database.db.execute(
@@ -127,7 +129,7 @@ def main():
     # Database.db.commit()
     # re = Database.select_all('users')
     # print(dict(re))
-    # cursor = Database.select_cond('users', "where username='Jonathan'and password='mugula'")
+    # cursor = Database.select_cond('issues', "where status='open'")
     # print(dict(cursor))
 
 
