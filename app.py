@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, session, flash
 from database import Database
-from flask_oauth import OAuth
+# from flask_oauth import OAuth
 
 SECRET_KEY = 'development key'
 
