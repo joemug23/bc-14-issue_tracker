@@ -5,7 +5,7 @@ class Database:
     # a class db to interact with the db
 
     # db settings
-    db = sqlite3.connect('trial.db')
+    db = sqlite3.connect('trial.db', check_same_thread=False)
     db.row_factory = sqlite3.Row
 
     def create_table(self, sql):
@@ -80,52 +80,55 @@ class Database:
         # conds is a string containing the condition to pass in the sql query
         try:
             results = {}
-            query = 'select * from {} where {}'.format(table, conds)
+            query = "select * from {} ".format(table)+ conds
             cursor = Database.db.execute(query)
             for row in cursor:
                 # adding each row to the results dictionary
                 results[row[table + "_id"]] = dict(row)
-            return results
+            if len(results) > 0:
+                return results
+            return "No record found"
 
         except Exception as e:
             return "An error occurred: {}".format(e)
 
 
 def main():
+    pass
     # Database.select_all
     # db.row_factory = sqlite3.Row
-    Database.db.execute("drop table if exists issues")
-    Database.db.execute(
-        'create table issues(issues_id INTEGER PRIMARY KEY, '
-        'description text, '
-        'department text, '
-        'priority text, '
-        'status text DEFAULT "open",'
-        'comment text, '
-        'assigned_to text Default "No one",'
-        'raise_person text)')
 
-    Database.db.execute("drop table if exists users")
-    Database.db.execute(
-        'create table users(users_id INTEGER PRIMARY KEY, '
-        'username text, '
-        'email text, '
-        'status text DEFAULT "staff", '
-        'department text, '
-        'password text)')
-    Database.insert('users', {'username':'Jonathan', 'email':'joemzih23@gmail.com', 'status': 'admin', 'department': 'Operation', 'password':'mugula'})
-    Database.insert('users', {'username': 'joemug', 'email': 'joemzih23@gmail.com', 'status': 'staff',
-                              'department': 'Operation', 'password': 'mugula'})
 
-    # Database.insert('users', {'username': 'Mugula', 'password': 'pass'})
-    # Database.insert('users', {'username': 'Zihalirwa', 'password': '456'})
-    # Database.select_all('users')
-    # db.execute('insert into users (username, password) values(?, ?)', ('Joemug', '123'))
-    # db.execute('insert into users (username, password) values(?, ?)', ('joe', 'joe'))
+    # Database.db.execute("drop table if exists issues")
+    # Database.db.execute(
+    #     'create table issues(issues_id INTEGER PRIMARY KEY, '
+    #     'description text, '
+    #     'department text, '
+    #     'priority text, '
+    #     'status text DEFAULT "open",'
+    #     'comment text, '
+    #     'assigned_to text Default "No one",'
+    #     'raise_person text)')
+
+
+    # Database.db.execute("drop table if exists users")
+    # Database.db.execute(
+    #     'create table users(users_id INTEGER PRIMARY KEY, '
+    #     'username text, '
+    #     'email text, '
+    #     'status text DEFAULT "staff", '
+    #     'department text, '
+    #     'password text)')
+    # Database.insert('users', {'username':'Jonathan', 'email':'joemzih23@gmail.com', 'status': 'admin', 'department': 'Operation', 'password':'mugula'})
+    # Database.insert('users', {'username': 'joemug', 'email': 'joemzih23@gmail.com', 'status': 'staff',
+    #                           'department': 'Operation', 'password': 'mugula'})
+
+
     # Database.db.commit()
-    # cursor = Database.db.execute('select * from users')
-    # for row in cursor:
-    #     print(dict(row))
+    # re = Database.select_all('users')
+    # print(dict(re))
+    # cursor = Database.select_cond('users', "where username='Jonathan'and password='mugula'")
+    # print(dict(cursor))
 
 
 if __name__ == '__main__': main()

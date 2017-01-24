@@ -2,6 +2,16 @@
 {% block body %}
 <div class="container" id="main">
 
+	<!-- <nav class="navbar navbar-default navbar-fixed-top">
+	  <div class="container">
+	  <p>ISSUE TRACKER SYSTEM</p>
+	  {% if session['screen_name'] %} 
+		<p class="navbar-text navbar-left">Welcome {{ session['screen_name'] }}</p>
+	  {% endif %}
+	    
+	  </div>
+	</nav> -->
+
 	<form id="addIssue" method="POST" class="form-horizontal">
 	  
 	  <div class="form-group">
