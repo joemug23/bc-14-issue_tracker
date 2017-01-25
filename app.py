@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, session, flash, jsonify
 from database import Database
-# from flask_oauth import OAuth
+from flask_oauth import OAuth
 
 SECRET_KEY = 'development key'
 
@@ -57,11 +57,45 @@ def raise_issue():
     return redirect(url_for('go_home'))
 
 
+@app.route('/delete_issue/<card_id>')
+def delete_issue(card_id):
+	# deleting element by id
+	Database.deleting('issues',{'issues_id':card_id})
+	return redirect(url_for('go_home'))
+
+@app.route('/assign_user/<card_id>', methods=['POST'])
+def assign_user(card_id):
+	# update the record setting assigned to user
+    assigned_user = request.form['staffname']
+	# call to Database.update() with proper arguments
+    Database.update('issues', {'issues_id':card_id, 'assigned_to': assigned_user})
+    return redirect(url_for('go_home'))
+
+
 @app.route('/get_open_issues', methods=['GET'])
 def get_open_issues():
+	# return open issues from db
     results = Database.select_cond('issues', "where status='open'")
 
     return jsonify(results)
+
+@app.route('/get_closed_issues', methods=['GET'])
+def get_closed_issues():
+	# return closed issues from db
+    results = Database.select_cond('issues', "where status='closed'")
+    if results == 'No record found':
+        return "Empty"
+    return jsonify(results)
+
+@app.route('/update_issue_status', methods=['POST'])
+def update_issue_status():
+    el_id = None
+    target = None
+    if request.methods == 'POST':
+        el_id = request.json['data_id']
+        target = request.json['target']
+        Database.update('issues', {'issues_id': el_id, 'status': target})
+        return redirect(url_for('go_home'))
 
 
 @app.route('/do_login', methods=['POST'])
@@ -100,7 +134,7 @@ def logout():
     if session['twitter_token']:
         del session['twitter_token']
     flash('You were signed out')
-    return redirect(request.referrer or url_for('login'))
+    return redirect(request.referrer or url_for('index'))
 
 
 @app.route('/oauth-authorized')
