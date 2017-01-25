@@ -39,11 +39,6 @@ def index():
     return render_template('login.html')
 
 
-@app.route('/add')
-def got_to_add():
-    return render_template('add_issue.html')
-
-
 @app.route('/raise_issue', methods=['POST'])
 def raise_issue():
     # adding an issue to the database
@@ -62,6 +57,7 @@ def delete_issue(card_id):
 	# deleting element by id
 	Database.deleting('issues',{'issues_id':card_id})
 	return redirect(url_for('go_home'))
+
 
 @app.route('/assign_user/<card_id>', methods=['POST'])
 def assign_user(card_id):
@@ -87,15 +83,14 @@ def get_closed_issues():
         return "Empty"
     return jsonify(results)
 
-@app.route('/update_issue_status', methods=['POST'])
-def update_issue_status():
-    el_id = None
-    target = None
-    if request.methods == 'POST':
-        el_id = request.json['data_id']
-        target = request.json['target']
-        Database.update('issues', {'issues_id': el_id, 'status': target})
-        return redirect(url_for('go_home'))
+@app.route('/update_issue_status/<tar>/<eid>', methods=['POST'])
+def update_issue_status(tar, eid):
+    # update user issue status
+    el_id = eid
+    target = tar
+    Database.update('issues', {'issues_id': el_id, 'status': target})
+    return redirect(url_for('go_home'))
+
 
 
 @app.route('/do_login', methods=['POST'])
