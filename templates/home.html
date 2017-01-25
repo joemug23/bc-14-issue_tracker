@@ -39,7 +39,7 @@
 				  <div class="form-group">
 				    <label for="issueDescription" class="col-sm-2 control-label">Issue Description</label>
 				    <div class="col-sm-10">
-				      <input type="test" class="form-control" name="description" id="issueDescription" placeholder="Issue Description" required>
+				      <input type="text" class="form-control" name="description" id="issueDescription" placeholder="Issue Description" required>
 				    </div>
 				  </div>
 
@@ -90,7 +90,7 @@
 				  <div class="panel-heading">
 				    <h3 class="panel-title">Open Issues</h3>
 				  </div>
-				  <div id="openCards" class="panel-body">
+				  <div id="open" class="panel-body" ondrop="drop(event)" ondragover="allowDrop(event)">
 				    <!--Cards of open issues-->
 				  </div>
 				</div>
@@ -102,8 +102,8 @@
 				  <div class="panel-heading">
 				    <h3 class="panel-title">Closed Issues</h3>
 				  </div>
-				  <div class="panel-body">
-				    cards of closed issues
+				  <div id="closed" class="panel-body" ondrop="drop(event)" ondragover="allowDrop(event)">
+				    <!-- cards of closed issues -->
 				  </div>
 				</div>
 			</div>
