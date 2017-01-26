@@ -39,11 +39,6 @@ def index():
     return render_template('login.html')
 
 
-@app.route('/add')
-def got_to_add():
-    return render_template('add_issue.html')
-
-
 @app.route('/raise_issue', methods=['POST'])
 def raise_issue():
     # adding an issue to the database
@@ -54,6 +49,7 @@ def raise_issue():
 
     Database.insert('issues', {'description': issue_desc, 'department': department, 'priority': priority,
                                      'raise_person': raised_by})
+    flash('Issue raised successfully')
     return redirect(url_for('go_home'))
 
 
@@ -61,7 +57,9 @@ def raise_issue():
 def delete_issue(card_id):
 	# deleting element by id
 	Database.deleting('issues',{'issues_id':card_id})
+	flash('Issue succefully deleted!')
 	return redirect(url_for('go_home'))
+
 
 @app.route('/assign_user/<card_id>', methods=['POST'])
 def assign_user(card_id):
@@ -69,33 +67,47 @@ def assign_user(card_id):
     assigned_user = request.form['staffname']
 	# call to Database.update() with proper arguments
     Database.update('issues', {'issues_id':card_id, 'assigned_to': assigned_user})
+    flash('Issue assigned to user!')
     return redirect(url_for('go_home'))
 
 
 @app.route('/get_open_issues', methods=['GET'])
 def get_open_issues():
 	# return open issues from db
-    results = Database.select_cond('issues', "where status='open'")
-
-    return jsonify(results)
+    if session['user_status'] != 'admin':
+        results = Database.select_cond('issues', "where status='open' and raise_person='{}'".format(session['screen_name']))
+        if results != 'No record found':
+            return jsonify(results)
+        return "Empty"
+    else:
+        results = Database.select_cond('issues', "where status='open' and department='{}'".format(session['user_dept']))
+        if results != 'No record found':
+            return jsonify(results)
+        return "Empty"
 
 @app.route('/get_closed_issues', methods=['GET'])
 def get_closed_issues():
 	# return closed issues from db
-    results = Database.select_cond('issues', "where status='closed'")
-    if results == 'No record found':
+    if session['user_status'] != 'admin':
+        results = Database.select_cond('issues', "where status='closed' and raise_person='{}'".format(session['screen_name']))
+        if results != 'No record found':
+            return jsonify(results)
         return "Empty"
-    return jsonify(results)
+    else:
+        results = Database.select_cond('issues', "where status='closed' and department='{}'".format(session['user_dept']))
+        if results == 'No record found':
+            return "Empty"
+        return jsonify(results)
 
-@app.route('/update_issue_status', methods=['POST'])
-def update_issue_status():
-    el_id = None
-    target = None
-    if request.methods == 'POST':
-        el_id = request.json['data_id']
-        target = request.json['target']
-        Database.update('issues', {'issues_id': el_id, 'status': target})
-        return redirect(url_for('go_home'))
+@app.route('/update_issue_status/<tar>/<eid>', methods=['POST'])
+def update_issue_status(tar, eid):
+    # update user issue status
+    el_id = eid
+    target = tar
+    Database.update('issues', {'issues_id': el_id, 'status': target})
+    flash('Issue added to'.format(target))
+    return redirect(url_for('go_home'))
+
 
 
 @app.route('/do_login', methods=['POST'])
@@ -105,16 +117,19 @@ def do_login():
     password = request.form['password_in']
     res = Database.select_cond('users', "where username='{}' and password='{}'".format(username, password))
     if res == "No record found":
-        return redirect(url_for('login'))
+        return redirect(url_for('/'))
 
     session['screen_name'] = res[1]['username']
+    session['user_status'] = res[1]['status']
+    session['user_dept'] = res[1]['department']
     return redirect(url_for('go_home'))
 
 
 @app.route('/home')
 def go_home():
     # app main point
-    return render_template('home.html')
+    as_posted = Database.select_cond('issues', 'where raise_person="{}"'.format(session['screen_name']))
+    return render_template('home.html', as_posted = as_posted)
 
 
 @app.route('/twitter_login')
@@ -127,14 +142,14 @@ def twitter_login():
 @app.route('/logout')
 def logout():
     # log out and clear session details
-    if session['screen_name']:
-        del session['screen_name']
-    if session['access_token']:
-        del session['access_token']
-    if session['twitter_token']:
-        del session['twitter_token']
-    flash('You were signed out')
-    return redirect(request.referrer or url_for('index'))
+    try:
+        for k in session.keys():
+            del session[k]
+        flash('You were signed out')
+        return redirect(url_for('index'))
+    except KeyError:
+    	flash("Something went wrong while loging out")
+    	return redirect('/')
 
 
 @app.route('/oauth-authorized')
@@ -145,11 +160,12 @@ def oauth_authorized(resp):
     if resp is None:
         flash(u'You denied the request to sign in.')
         return redirect(next_url)
-    print("I am here")
+    
     access_token = resp['oauth_token']
-    print(access_token)
+    
     session['access_token'] = access_token
     session['screen_name'] = resp['screen_name']
+    session['user_status'] = 'user'
 
     session['twitter_token'] = (
         resp['oauth_token'],

@@ -3,35 +3,43 @@
 {% block body %}
 <div id="loginFormContainer" class="container">
 
-    <!-- <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-      <p>ISSUE TRACKER SYSTEM</p>
-      {% if session['screen_name'] %} 
-      <p class="navbar-text navbar-left">Welcome {{ session['screen_name'] }}</p>
-      {% endif %}
-        
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ message }}
       </div>
-    </nav> -->
+        <!-- <p class="bg-danger" style="padding: 18px">{{ message }}</p> -->
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+    <div id="loginCont" class="col-md-6">
+      <form id="loginForm" action="/do_login" method="POST">
+          <div id="login_title">
+            LOG IN
+          </div>
 
-    <form id="loginForm" action="/do_login" method="POST">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+          </div>
 
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" class="form-control" id="username" name="username" placeholder="Username">
-        </div>
+          <div class="form-group">
+            <label for="password_in">Password</label>
+            <input type="password" class="form-control" id="password_in" name="password_in" placeholder="Password">
+          </div>
 
-        <div class="form-group">
-          <label for="password_in">Password</label>
-          <input type="password" class="form-control" id="password_in" name="password_in" placeholder="Password">
-        </div>
+          <button type="submit" name="logIn" class="btn btn-success">Log In</button>
 
-        <button type="submit" name="logIn" class="btn btn-success">Log In</button>
-
-        <div class="form-group">
-            <p><strong>Or sign in with twitter.</strong></p>
-            <a href="{{ url_for('twitter_login') }}"><img src="{{
-            url_for('static', filename='sign-in-twitter.png') }}" alt="sign in with twitter"></a>
-        </div>
-    </form> <!-- End of loginform -->
+          <div class="form-group">
+              <p><strong>Or sign in with twitter.</strong></p>
+              <a href="{{ url_for('twitter_login') }}"><img src="{{
+              url_for('static', filename='sign-in-twitter.png') }}" alt="sign in with twitter"></a>
+          </div>
+      </form> <!-- End of loginform -->
+    </div>
   </div><!-- End of loginFormContainer -->
 {% endblock %}

@@ -2,12 +2,16 @@ $('document').ready(function(){
 
 	
     $.ajax({
-        method: 'GET',
+        type: 'GET',
         url: '/get_open_issues',
         success: function(res){
         	//check if res is not empty
+        	if(res === 'Empty'){
+        		$('#open').html("No record")
+        	}
+        	else{
             for(var k in res){
-                $('#open').append('<div class="mycards col-md-5" id="'+ res[k] +'" draggable="true" ondragstart="drag(event)"><div class="card_title">'
+                $('#open').append('<div class="mycards col-md-5" id="'+ k +'" draggable="true" ondragstart="drag(event)"><div class="card_title">'
                 							+ res[k].department +' <span class="label label-warning">'+res[k].priority+'</span></div>'
                 							+'<div class="card_content"><p><small><em>By: '+ res[k].raise_person +'</em></small></p>'+ res[k].description+'<p><small><em>Assigned to: '+ res[k].assigned_to +'</em></small></p></div>'
                 							+'<div class="card_controls"><a href="/delete_issue/'+ k +'"><span class="glyphicon glyphicon-trash">Delete</span></a>  <button class="btn btn-info" data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-user"></span>Assign</button></div>'
@@ -39,17 +43,22 @@ $('document').ready(function(){
 											+'</div>'
                 							+'</div>');
             }
+        }
 
         }
     });
 
     $.ajax({
-        method: 'GET',
+        type: 'GET',
         url: '/get_closed_issues',
         success: function(res){
         	// check if res is not empty
+        	if(res === 'Empty'){
+        		$('#closed').html("No record")
+        	}
+        	else{
             for(var k in res){
-                $('#closed').append('<div class="mycards col-md-5" id="'+ res[k] +'" draggable="true" ondragstart="drag(event)"><div class="card_title">'
+                $('#closed').append('<div class="mycards col-md-5" id="'+ k +'" draggable="true" ondragstart="drag(event)"><div class="card_title">'
                 							+ res[k].department +' <span class="label label-warning">'+res[k].priority+'</span></div>'
                 							+'<div class="card_content"><p><small><em>By: '+ res[k].raise_person +'</em></small></p>'+ res[k].description+'<p><small><em>Assigned to: '+ res[k].assigned_to +'</em></small></p></div>'
                 							+'<div class="card_controls"><a href="/delete_issue/'+ k +'"><span class="glyphicon glyphicon-trash">Delete</span></a>  <button class="btn btn-info" data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-user"></span>Assign</button></div>'
@@ -80,7 +89,7 @@ $('document').ready(function(){
 											  +'</div>'
 											+'</div>'
                 							+'</div>');
-            }
+            }}
 
         }
     });
@@ -99,11 +108,9 @@ function drop(ev) {
     var data = ev.dataTransfer.getData("text");
     ev.target.append(document.getElementById(data));
     var target = ev.target.id
-    var data_id = data.id
 
     $.ajax({
-    	method: 'POST',
-    	url: '/update_issue_status',
-    	data: {target: target, data_id: data_id}
+    	type: 'POST',
+    	url: '/update_issue_status/'+target+'/'+data+''
     })
 }

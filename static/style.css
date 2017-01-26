@@ -30,3 +30,21 @@
 .card_content {
 	margin: 10px 5px
 }
+
+.alert {
+	text-align: center;
+}
+
+#loginCont {
+	margin: 150px 200px;
+	border: 1px solid black;
+	border-radius: 15px;
+
+}
+
+#login_title {
+	margin-bottom: 1px solid black;
+	padding: 20px;
+	text-align: center;
+	font-size: 18px;
+}

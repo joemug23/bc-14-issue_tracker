@@ -20,6 +20,19 @@
 		  </div><!-- /.container-fluid -->
 		</nav>	
 	</div>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    <ul class=flashes>
+	    {% for message in messages %}
+	    	<div class="alert alert-warning alert-dismissible" role="alert">
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  {{ message }}
+			</div>
+	      <!-- <p class="bg-danger" style="padding: 18px">{{ message }}</p> -->
+	    {% endfor %}
+	    </ul>
+	  {% endif %}
+	{% endwith %}
 
 	<div>
 		<button class="btn btn-success btn-lg" data-toggle="modal" data-target="#addModel">Raise Issue</button>
@@ -83,31 +96,70 @@
 		  </div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 
-		<div id="dashboard" class="row">
-			<div id="open_issues" class="col-md-6">
+		{% if as_posted != "No record found" %}
+			{% if session['user_status'] == "admin" %}
+				<div id="dashboard" class="row">
+					<div id="open_issues" class="col-md-6">
 
-				<div class="panel panel-danger">
-				  <div class="panel-heading">
-				    <h3 class="panel-title">Open Issues</h3>
-				  </div>
-				  <div id="open" class="panel-body" ondrop="drop(event)" ondragover="allowDrop(event)">
-				    <!--Cards of open issues-->
-				  </div>
+						<div class="panel panel-danger">
+						  <div class="panel-heading">
+						    <h3 class="panel-title">Open Issues</h3>
+						  </div>
+						  <div id="open" class="panel-body" ondrop="drop(event)" ondragover="allowDrop(event)">
+						    <!--Cards of open issues-->
+						  </div>
+						</div>
+
+					</div>
+
+					<div id="closed_issues" class="col-md-6">
+						<div class="panel panel-success">
+						  <div class="panel-heading">
+						    <h3 class="panel-title">Closed Issues</h3>
+						  </div>
+						  <div id="closed" class="panel-body" ondrop="drop(event)" ondragover="allowDrop(event)">
+						    <!-- cards of closed issues -->
+						  </div>
+						</div>
+					</div>
+				</div> <!-- End of dashboard -->
+			{% else %}
+				<div id="dashboard" class="row">
+					<div id="open_issues" class="col-md-6">
+
+						<div class="panel panel-danger">
+						  <div class="panel-heading">
+						    <h3 class="panel-title">Open Issues</h3>
+						  </div>
+						  <div id="open" class="panel-body">
+						    <!--Cards of open issues-->
+						  </div>
+						</div>
+
+					</div>
+
+					<div id="closed_issues" class="col-md-6">
+						<div class="panel panel-success">
+						  <div class="panel-heading">
+						    <h3 class="panel-title">Closed Issues</h3>
+						  </div>
+						  <div id="closed" class="panel-body">
+						    <!-- cards of closed issues -->
+						  </div>
+						</div>
+					</div>
+				</div> <!-- End of dashboard -->
+			{% endif %}
+		{% else %}
+			<div>
+				<div class="jumbotron">
+				  <h1>Hello {{ session['screen_name'] }},</h1>
+				  <p>Welcome!!!</p>
+				  <p>To add an Issue click on the "Raise Issue botton above"</p>
 				</div>
-
 			</div>
-
-			<div id="closed_issues" class="col-md-6">
-				<div class="panel panel-success">
-				  <div class="panel-heading">
-				    <h3 class="panel-title">Closed Issues</h3>
-				  </div>
-				  <div id="closed" class="panel-body" ondrop="drop(event)" ondragover="allowDrop(event)">
-				    <!-- cards of closed issues -->
-				  </div>
-				</div>
-			</div>
-		</div> <!-- End of dashboard -->
+		{% endif %}
+		
 	</div>
 
 	
