@@ -3,6 +3,7 @@ dominate==2.3.1
 Flask==0.12
 Flask-Bootstrap==3.3.7.1
 Flask-OAuth==0.12
+gunicorn==19.6.0
 httplib2==0.9.2
 itsdangerous==0.24
 Jinja2==2.9.4
