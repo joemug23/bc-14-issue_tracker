@@ -109,7 +109,6 @@ def update_issue_status(tar, eid):
     return redirect(url_for('go_home'))
 
 
-
 @app.route('/do_login', methods=['POST'])
 def do_login():
     # login
